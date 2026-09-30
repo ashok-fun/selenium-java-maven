@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.testng.ITestResult;
+import org.testng.ITestContext;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
@@ -17,10 +18,13 @@ public abstract class BaseTest {
     private static final ThreadLocal<WebDriver> CURRENT_DRIVER = new ThreadLocal<>();
 
     @BeforeMethod(alwaysRun = true)
-    protected void setUp(Method testMethod) {
+    protected void setUp(Method testMethod, ITestContext testContext) {
         ExtentLogger.startTest(testMethod);
 
-        String browser = System.getProperty("browser", DEFAULT_BROWSER);
+        String browser = testContext.getCurrentXmlTest().getParameter("browser");
+        if (browser == null || browser.isBlank()) {
+            browser = System.getProperty("browser", DEFAULT_BROWSER);
+        }
         try {
             WebDriver driver = DriverManager.getDriver(browser);
             CURRENT_DRIVER.set(driver);

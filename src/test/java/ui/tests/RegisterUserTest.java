@@ -13,7 +13,7 @@ import ui.pages.LoginPage;
 import ui.pages.SignupPage;
 
 public class RegisterUserTest extends BaseTest {
-    @Test(groups = {"ui", "regression"})
+    @Test(groups = {"ui", "smoke", "regression", "crossbrowser"})
     public void registerUserAndDeleteAccount() {
         SoftAssert softly = new SoftAssert();
         String userName = "Automation User " + UUID.randomUUID().toString().substring(0, 8);

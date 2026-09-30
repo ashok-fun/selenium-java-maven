@@ -32,7 +32,7 @@
 
 ### Pending
 
-- [ ] Add `smoke.xml`, `regression.xml`, and `crossbrowser.xml` suites and wire them into Maven/Surefire execution.
+- [X] Add `smoke.xml`, `regression.xml`, and `crossbrowser.xml` suites with `smoke`, `regression`, and `crossbrowser` Maven profiles wired to Surefire.
 - [ ] Move registration inputs into a JSON test-data fixture; current test values are inline (email is unique per run).
 - [ ] Execute the flow on a real browser/site and verify selectors, browser behavior, and cleanup. The live registration test has only been compiled, not run, to avoid creating a real account during local validation.
 - [ ] Validate Chrome, Firefox, and Edge runs on the target Windows environment; cross-browser driver support exists, but suite execution is not wired.
