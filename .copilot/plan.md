@@ -19,7 +19,7 @@
    Create a ProductsListResponseValidator class that validates the response for the products list API. Include JSON schema validation, status code checks, and key field assertions. Integrate with Extent Reports. Do not modify unrelated files.
 10. API Test (TestNG)
     Generate a TestNG test class for the Products List API. Use the APIClient, ProductsListRequestBuilder, and ProductsListResponseValidator. Integrate Extent Reports logging. Do not modify other modules.
-11. Utilities (JSON Reader, CSV/Excel Reader, Random Data, File Download, Console Logs)
+11. [X] Utilities (JSON Reader, CSV/Excel Reader, Random Data, File Download, Console Logs)
     Create utility classes: JsonDataReader, CsvReader, ExcelReader, RandomDataGenerator, FileDownloadValidator, BrowserConsoleLogCollector. Each utility should be standalone, reusable, and not modify other framework files.
 12. ConfigManager (.properties loader)
     Create a ConfigManager class that loads .properties files and exposes typed getters. Include environment selection logic. Add a placeholder interface for future encrypted config support. Do not modify other modules.
