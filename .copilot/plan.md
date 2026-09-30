@@ -4,11 +4,11 @@
     Generate a BaseTest class that initializes and tears down WebDriver using DriverManager. Integrate Extent Reports: create test nodes, attach screenshots on failure, and log steps. Ensure compatibility with parallel TestNG execution. Do not modify other classes.
 3. [X] BasePage + BaseComponent (POM + Component Model)
     Create a BasePage class and a BaseComponent class for a POM + Component Object Model framework. Include WebDriver reference, fluent wait utilities, common actions (click, type, getText), and logging. Ensure both classes are reusable and extendable. Do not modify unrelated files.
-
 4. [X] UI Components (Header, Footer, Sidebar, Modal, Table, Dropdown, Toast)
-   Generate component classes: HeaderComponent, FooterComponent, SidebarComponent, ModalComponent, TableComponent, DropdownComponent, ToastComponent. Each should extend BaseComponent and expose reusable actions. Keep locators clean and descriptive. Do not modify other modules.
-5. Page Objects for AutomationExercise (Signup/Login + Registration)
-   Create Page Object classes for automationexercise.com to support Test Case 1: Register User. Include HomePage, LoginPage, SignupPage, AccountCreatedPage. Use POM + Component Object Model. Include clean locators, reusable actions, and assertions placeholders. Do not modify other framework files.
+    Generate component classes: HeaderComponent, FooterComponent, SidebarComponent, ModalComponent, TableComponent, DropdownComponent, ToastComponent. Each should extend BaseComponent and expose reusable actions. Keep locators clean and descriptive. Do not modify other modules.
+
+5. [X] Page Objects for AutomationExercise (Register User)
+   Create Page Object classes for automationexercise.com to support Test Case 1: refer the chat for test case steps. Use POM + Component Object Model. Include clean locators, reusable actions, and assertions placeholders. Do not modify other framework files.
 6. UI Test: Register User (TestNG)
    Generate a TestNG test class for Test Case 1: Register User on automationexercise.com. Use the Page Objects and Components previously created. Integrate Extent Reports logging and soft assertions. Ensure thread-safe execution. Do not modify other modules.
 7. API Client (RestAssured)
@@ -31,3 +31,5 @@
     Generate a README.md, ASCII architecture diagram, and CONTRIBUTING.md for this automation framework. Include setup instructions, folder structure, how to add UI/API tests, how parallel execution works, and how reporting/logging is integrated. Do not modify code files.
 16. Azure DevOps Pipeline (YAML)
     Create an Azure DevOps YAML pipeline that checks out code, installs Java and Maven,
+
+#### [Register User](https://automationexercise.com/test_cases#collapse1)
