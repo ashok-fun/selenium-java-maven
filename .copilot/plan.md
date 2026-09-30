@@ -9,7 +9,7 @@
 
 5. [X] Page Objects for AutomationExercise (Register User)
    Create Page Object classes for automationexercise.com to support Test Case 1: refer the chat for test case steps. Use POM + Component Object Model. Include clean locators, reusable actions, and assertions placeholders. Do not modify other framework files.
-6. UI Test: Register User (TestNG)
+6. [X] UI Test: Register User (TestNG)
    Generate a TestNG test class for Test Case 1: Register User on automationexercise.com. Use the Page Objects and Components previously created. Integrate Extent Reports logging and soft assertions. Ensure thread-safe execution. Do not modify other modules.
 7. API Client (RestAssured)
    Create an APIClient class using RestAssured. Include base URI loading from properties, common headers, OAuth2/Bearer token support, and logging of requests/responses. Do not modify unrelated files.
