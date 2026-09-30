@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -21,6 +23,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public abstract class BaseTest {
+    private static final Logger LOGGER = LogManager.getLogger(BaseTest.class);
     private static final String DEFAULT_BROWSER = "chrome";
     private static final String DEFAULT_REPORT_PATH = "target/extent-reports/extent.html";
     private static final ThreadLocal<ExtentTest> CURRENT_TEST = new ThreadLocal<>();
@@ -43,8 +46,11 @@ public abstract class BaseTest {
             WebDriver driver = DriverManager.getDriver(browser);
             CURRENT_DRIVER.set(driver);
             test.log(Status.INFO, "Started WebDriver for browser: " + browser);
+            LOGGER.info("Started WebDriver for test {} on thread {}", testMethod.getName(),
+                    Thread.currentThread().getName());
         } catch (RuntimeException exception) {
             test.fail(exception);
+            LOGGER.error("WebDriver setup failed for test {}", testMethod.getName(), exception);
             throw exception;
         }
     }
@@ -72,6 +78,7 @@ public abstract class BaseTest {
             try {
                 DriverManager.quitDriver();
             } catch (RuntimeException cleanupFailure) {
+                LOGGER.error("WebDriver cleanup failed", cleanupFailure);
                 if (test != null) {
                     test.warning("WebDriver teardown failed: " + cleanupFailure.getMessage());
                     if (result.getStatus() != ITestResult.FAILURE) {

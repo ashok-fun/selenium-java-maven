@@ -2,8 +2,8 @@ package core;
 
 import java.time.Duration;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -27,7 +27,7 @@ public abstract class BasePage {
             throw new IllegalArgumentException("timeout must be greater than zero");
         }
         this.wait = new FluentWaitUtils(driver, timeout, DEFAULT_POLLING_INTERVAL);
-        this.logger = Logger.getLogger(getClass().getName());
+        this.logger = LogManager.getLogger(getClass());
     }
 
     protected final WebElement waitForVisible(By locator) {
@@ -46,7 +46,7 @@ public abstract class BasePage {
 
     protected final void click(By locator) {
         waitForClickable(locator).click();
-        logger.log(Level.INFO, "Clicked element: {0}", locator);
+        logger.info("Clicked element: {}", locator);
     }
 
     protected final void type(By locator, CharSequence text) {
@@ -54,12 +54,12 @@ public abstract class BasePage {
         WebElement element = waitForVisible(locator);
         element.clear();
         element.sendKeys(text);
-        logger.log(Level.INFO, "Entered text into element: {0}", locator);
+        logger.info("Entered text into element: {}", locator);
     }
 
     protected final String getText(By locator) {
         String text = waitForVisible(locator).getText();
-        logger.log(Level.INFO, "Read text from element: {0}", locator);
+        logger.info("Read text from element: {}", locator);
         return text;
     }
 }

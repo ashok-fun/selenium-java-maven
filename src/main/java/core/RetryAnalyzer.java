@@ -1,13 +1,13 @@
 package core;
 
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.testng.ITestResult;
 import org.testng.IRetryAnalyzer;
 
 public final class RetryAnalyzer implements IRetryAnalyzer {
-    private static final Logger LOGGER = Logger.getLogger(RetryAnalyzer.class.getName());
+    private static final Logger LOGGER = LogManager.getLogger(RetryAnalyzer.class);
     private static final String RETRY_COUNT_PROPERTY = "test.retry.count";
     private final int maximumRetries;
     private int retryCount;
@@ -30,9 +30,7 @@ public final class RetryAnalyzer implements IRetryAnalyzer {
             return false;
         }
         retryCount++;
-        LOGGER.log(Level.WARNING, "Retrying test {0} ({1}/{2})", new Object[] {
-            result.getName(), retryCount, maximumRetries
-        });
+        LOGGER.warn("Retrying test {} ({}/{})", result.getName(), retryCount, maximumRetries);
         return true;
     }
 

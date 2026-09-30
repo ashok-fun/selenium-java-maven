@@ -2,7 +2,6 @@ package ui.pages;
 
 import core.WaitTimeoutException;
 import java.util.Objects;
-import java.util.logging.Level;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import core.BasePage;
@@ -26,7 +25,7 @@ public class HomePage extends BasePage {
 
     public HomePage open() {
         driver.get(URL);
-        logger.log(Level.INFO, "Navigated to AutomationExercise: {0}", URL);
+        logger.info("Navigated to AutomationExercise: {}", URL);
         return this;
     }
 
