@@ -10,8 +10,8 @@ import ui.components.HeaderComponent;
 public class HomePage extends BasePage {
     public static final String URL = "http://automationexercise.com";
 
-    private static final By HOME_LOGO = By.cssSelector(
-            "a[href='/'] img[alt='Website for automation practice']");
+    private static final By HOME_LOGO = By.xpath(
+            "//img[@src='/static/images/home/logo.png']");
     private static final By LOGGED_IN_STATUS = By.xpath(
             "//header//a[contains(normalize-space(.), 'Logged in as')]");
     private static final By HEADER = By.id("header");

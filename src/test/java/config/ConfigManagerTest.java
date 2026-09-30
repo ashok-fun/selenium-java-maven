@@ -21,7 +21,7 @@ class ConfigManagerTest {
         ConfigManager dev = new ConfigManager("dev");
         ConfigManager qa = new ConfigManager("qa");
 
-        assertEquals("http://localhost:8080", local.getProperties().getProperty("baseUrl"));
+        assertEquals("https://automationexercise.com/", local.getProperties().getProperty("baseUrl"));
         assertEquals("http://localhost:8080", dev.getProperties().getProperty("baseUrl"));
         assertEquals("https://automationexercise.com", qa.getProperties().getProperty("baseUrl"));
         assertEquals("qa", qa.getEnvironment());

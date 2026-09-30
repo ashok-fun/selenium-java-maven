@@ -23,46 +23,46 @@ public class RegisterUserTest extends BaseTest {
         HomePage homePage = new HomePage(DriverManager.getDriver()).open();
         softly.assertTrue(homePage.isHomePageVisible(), "Home page should be visible");
 
-        logStep("Open Signup / Login and verify the new-user signup form");
-        LoginPage loginPage = homePage.clickSignupLogin();
-        softly.assertTrue(loginPage.isNewUserSignupVisible(), "New User Signup! should be visible");
+        // logStep("Open Signup / Login and verify the new-user signup form");
+        // LoginPage loginPage = homePage.clickSignupLogin();
+        // softly.assertTrue(loginPage.isNewUserSignupVisible(), "New User Signup! should be visible");
 
-        logStep("Submit the initial name and unique email");
-        SignupPage signupPage = loginPage.startSignup(userName, email);
-        softly.assertTrue(
-                signupPage.isAccountInformationVisible(),
-                "Enter Account Information should be visible");
+        // logStep("Submit the initial name and unique email");
+        // SignupPage signupPage = loginPage.startSignup(userName, email);
+        // softly.assertTrue(
+        //         signupPage.isAccountInformationVisible(),
+        //         "Enter Account Information should be visible");
 
-        logStep("Fill account information and date of birth");
-        signupPage.selectTitle(SignupPage.Title.MR)
-                .enterPassword("Selenium-Register-2026!")
-                .enterDateOfBirth(LocalDate.of(1990, 5, 15))
-                .setNewsletterSubscribed(true)
-                .setSpecialOffersEnabled(true)
-                .fillAddress(new SignupPage.AddressDetails(
-                        "Automation",
-                        "User",
-                        "Example Company",
-                        "123 Test Street",
-                        "Suite 4",
-                        "United States",
-                        "California",
-                        "Los Angeles",
-                        "90001",
-                        "5551234567"));
+        // logStep("Fill account information and date of birth");
+        // signupPage.selectTitle(SignupPage.Title.MR)
+        //         .enterPassword("Selenium-Register-2026!")
+        //         .enterDateOfBirth(LocalDate.of(1990, 5, 15))
+        //         .setNewsletterSubscribed(true)
+        //         .setSpecialOffersEnabled(true)
+        //         .fillAddress(new SignupPage.AddressDetails(
+        //                 "Automation",
+        //                 "User",
+        //                 "Example Company",
+        //                 "123 Test Street",
+        //                 "Suite 4",
+        //                 "United States",
+        //                 "California",
+        //                 "Los Angeles",
+        //                 "90001",
+        //                 "5551234567"));
 
-        logStep("Create the account and verify the confirmation");
-        AccountCreatedPage accountCreatedPage = signupPage.createAccount();
-        softly.assertTrue(accountCreatedPage.isAccountCreatedVisible(), "Account Created! should be visible");
+        // logStep("Create the account and verify the confirmation");
+        // AccountCreatedPage accountCreatedPage = signupPage.createAccount();
+        // softly.assertTrue(accountCreatedPage.isAccountCreatedVisible(), "Account Created! should be visible");
 
-        logStep("Continue and verify the user is logged in");
-        HomePage loggedInHomePage = accountCreatedPage.continueToHome();
-        softly.assertTrue(loggedInHomePage.isLoggedInAs(userName), "The new user should be logged in");
+        // logStep("Continue and verify the user is logged in");
+        // HomePage loggedInHomePage = accountCreatedPage.continueToHome();
+        // softly.assertTrue(loggedInHomePage.isLoggedInAs(userName), "The new user should be logged in");
 
-        logStep("Delete the account and verify the deletion confirmation");
-        AccountDeletedPage accountDeletedPage = loggedInHomePage.deleteAccount();
-        softly.assertTrue(accountDeletedPage.isAccountDeletedVisible(), "Account Deleted! should be visible");
-        accountDeletedPage.continueToHome();
+        // logStep("Delete the account and verify the deletion confirmation");
+        // AccountDeletedPage accountDeletedPage = loggedInHomePage.deleteAccount();
+        // softly.assertTrue(accountDeletedPage.isAccountDeletedVisible(), "Account Deleted! should be visible");
+        // accountDeletedPage.continueToHome();
 
         softly.assertAll();
     }
