@@ -1,7 +1,7 @@
 package ui.pages;
 
+import core.WaitTimeoutException;
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import core.BasePage;
 
@@ -18,7 +18,7 @@ public class LoginPage extends BasePage {
     public boolean isNewUserSignupVisible() {
         try {
             return getText(NEW_USER_HEADING).trim().equals("New User Signup!");
-        } catch (TimeoutException exception) {
+        } catch (WaitTimeoutException exception) {
             return false;
         }
     }

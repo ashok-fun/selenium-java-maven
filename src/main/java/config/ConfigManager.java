@@ -1,5 +1,6 @@
 package config;
 
+import core.ConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -68,7 +69,7 @@ public final class ConfigManager {
             value = properties.getProperty(key);
         }
         if (value == null) {
-            throw new IllegalArgumentException("Required configuration property is missing: " + key);
+            throw new ConfigurationException("Required configuration property is missing: " + key);
         }
         return value.trim();
     }
@@ -90,7 +91,7 @@ public final class ConfigManager {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException exception) {
-            throw new IllegalArgumentException("Configuration property '" + key + "' must be an integer", exception);
+            throw new ConfigurationException("Configuration property '" + key + "' must be an integer", exception);
         }
     }
 
@@ -102,7 +103,7 @@ public final class ConfigManager {
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException exception) {
-            throw new IllegalArgumentException("Configuration property '" + key + "' must be an integer", exception);
+            throw new ConfigurationException("Configuration property '" + key + "' must be an integer", exception);
         }
     }
 
@@ -114,7 +115,7 @@ public final class ConfigManager {
         try {
             return Long.parseLong(value);
         } catch (NumberFormatException exception) {
-            throw new IllegalArgumentException("Configuration property '" + key + "' must be a long", exception);
+            throw new ConfigurationException("Configuration property '" + key + "' must be a long", exception);
         }
     }
 
@@ -126,7 +127,7 @@ public final class ConfigManager {
         if (value.equalsIgnoreCase("false")) {
             return false;
         }
-        throw new IllegalArgumentException("Configuration property '" + key + "' must be true or false");
+        throw new ConfigurationException("Configuration property '" + key + "' must be true or false");
     }
 
     public boolean getBoolean(String key, boolean defaultValue) {
@@ -140,7 +141,7 @@ public final class ConfigManager {
         if (value.equalsIgnoreCase("false")) {
             return false;
         }
-        throw new IllegalArgumentException("Configuration property '" + key + "' must be true or false");
+        throw new ConfigurationException("Configuration property '" + key + "' must be true or false");
     }
 
     public Properties getProperties() {
@@ -156,7 +157,7 @@ public final class ConfigManager {
                 baseProperties.getProperty("environment"),
                 DEFAULT_ENVIRONMENT);
         if (!VALID_ENVIRONMENT.matcher(selected).matches()) {
-            throw new IllegalArgumentException("Invalid environment name: " + selected);
+            throw new ConfigurationException("Invalid environment name: " + selected);
         }
         return selected;
     }
@@ -186,7 +187,7 @@ public final class ConfigManager {
         try (InputStream input = resource) {
             loaded.load(input);
         } catch (IOException exception) {
-            throw new IllegalStateException("Unable to load configuration resource: " + resourceName, exception);
+            throw new ConfigurationException("Unable to load configuration resource: " + resourceName, exception);
         }
         return loaded;
     }

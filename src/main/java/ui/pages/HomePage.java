@@ -1,9 +1,9 @@
 package ui.pages;
 
+import core.WaitTimeoutException;
 import java.util.Objects;
 import java.util.logging.Level;
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import core.BasePage;
 import ui.components.HeaderComponent;
@@ -34,7 +34,7 @@ public class HomePage extends BasePage {
         try {
             waitForVisible(HOME_LOGO);
             return true;
-        } catch (TimeoutException exception) {
+        } catch (WaitTimeoutException exception) {
             return false;
         }
     }
@@ -49,7 +49,7 @@ public class HomePage extends BasePage {
         try {
             String status = getText(LOGGED_IN_STATUS).replaceAll("\\s+", " ").trim();
             return status.equals("Logged in as " + username);
-        } catch (TimeoutException exception) {
+        } catch (WaitTimeoutException exception) {
             return false;
         }
     }

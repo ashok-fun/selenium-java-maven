@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.Locale;
 import java.util.Objects;
+import core.WaitTimeoutException;
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import core.BasePage;
@@ -40,7 +40,7 @@ public class SignupPage extends BasePage {
             return getText(ACCOUNT_INFORMATION_HEADING)
                     .trim()
                     .equalsIgnoreCase("Enter Account Information");
-        } catch (TimeoutException exception) {
+        } catch (WaitTimeoutException exception) {
             return false;
         }
     }

@@ -1,7 +1,7 @@
 package ui.pages;
 
+import core.WaitTimeoutException;
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import core.BasePage;
 
@@ -16,7 +16,7 @@ public class AccountCreatedPage extends BasePage {
     public boolean isAccountCreatedVisible() {
         try {
             return getText(ACCOUNT_CREATED_HEADING).toLowerCase().contains("account created");
-        } catch (TimeoutException exception) {
+        } catch (WaitTimeoutException exception) {
             return false;
         }
     }

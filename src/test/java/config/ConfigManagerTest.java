@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import core.ConfigurationException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
@@ -59,10 +60,10 @@ class ConfigManagerTest {
         Files.writeString(baseConfig, "attempts=many\nactive=yes\n");
         ConfigManager config = ConfigManager.fromFiles(baseConfig, "local");
 
-        assertThrows(IllegalArgumentException.class, () -> config.getString("missing"));
-        assertThrows(IllegalArgumentException.class, () -> config.getInt("attempts"));
-        assertThrows(IllegalArgumentException.class, () -> config.getBoolean("active"));
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(ConfigurationException.class, () -> config.getString("missing"));
+        assertThrows(ConfigurationException.class, () -> config.getInt("attempts"));
+        assertThrows(ConfigurationException.class, () -> config.getBoolean("active"));
+        assertThrows(ConfigurationException.class,
                 () -> ConfigManager.fromFiles(baseConfig, "../outside"));
     }
 

@@ -4,6 +4,8 @@
 - [x] Thread-local `DriverManager` with Chrome, Firefox, and Edge creation through Selenium Manager.
 - [x] `BaseTest` lifecycle, per-test Extent nodes, test categories, failure screenshots/page source, step logging, and report flushing.
 - [x] `BasePage` and `BaseComponent` with explicit waits, common actions, and root-scoped component lookup.
+- [x] Dedicated `FluentWaitUtils` with configurable polling, visible/clickable conditions, and framework timeout wrapping.
+- [x] Configurable TestNG `RetryAnalyzer` (`test.retry.count`) and framework exception types for configuration and wait failures.
 - [x] Seven reusable UI components: header, footer, sidebar, modal, table, dropdown, and toast.
 - [x] `ConfigManager` with file/classpath loading, environment overlays, system-property overrides, typed getters, and base URL selection.
 - [x] `EncryptedConfigPlaceholder` extension interface; no encryption implementation.
@@ -11,7 +13,6 @@
 - [x] Maven dependencies are version-pinned; Surefire and TestNG dependencies are present.
 
 ### Pending
-- [ ] Add dedicated `FluentWaitUtils`, `RetryAnalyzer`, and framework-specific exception types.
 - [ ] Extract reporting into the planned thread-safe `ExtentManager` and `ExtentLogger`; current report lifecycle is implemented inside `BaseTest`.
 - [ ] Replace `java.util.logging` usage with Log4j2 and add console/rolling-file configuration and `log4j2.xml`.
 - [ ] Add `EnvironmentLoader` and bundled `config.properties`, `env.qa.properties`, and `env.dev.properties` resources.
