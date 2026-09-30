@@ -16,6 +16,18 @@ class ConfigManagerTest {
     Path temporaryDirectory;
 
     @Test
+    void loadsBundledEnvironmentResources() {
+        ConfigManager local = new ConfigManager("local");
+        ConfigManager dev = new ConfigManager("dev");
+        ConfigManager qa = new ConfigManager("qa");
+
+        assertEquals("http://localhost:8080", local.getProperties().getProperty("baseUrl"));
+        assertEquals("http://localhost:8080", dev.getProperties().getProperty("baseUrl"));
+        assertEquals("https://automationexercise.com", qa.getProperties().getProperty("baseUrl"));
+        assertEquals("qa", qa.getEnvironment());
+    }
+
+    @Test
     void mergesEnvironmentPropertiesAndExposesTypedValues() throws Exception {
         Path baseConfig = temporaryDirectory.resolve("config.properties");
         Files.writeString(baseConfig, "environment=dev\nbaseUrl=https://base.example\ntimeout=10\nenabled=true\n");

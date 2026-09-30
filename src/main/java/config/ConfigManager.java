@@ -2,52 +2,34 @@ package config;
 
 import core.ConfigurationException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.regex.Pattern;
 
 public final class ConfigManager {
     private static final String DEFAULT_ENVIRONMENT = "local";
     private static final String BASE_CONFIG_RESOURCE = "config.properties";
-    private static final Pattern VALID_ENVIRONMENT = Pattern.compile("[A-Za-z0-9_-]+");
 
     private final Properties properties;
     private final String environment;
 
     public ConfigManager() {
-        this(loadClasspathProperties(BASE_CONFIG_RESOURCE), null, true);
+        this(EnvironmentLoader.loadClasspath(BASE_CONFIG_RESOURCE, null));
     }
 
     public ConfigManager(String environment) {
-        this(loadClasspathProperties(BASE_CONFIG_RESOURCE), environment, true);
+        this(EnvironmentLoader.loadClasspath(BASE_CONFIG_RESOURCE, environment));
     }
 
-    private ConfigManager(
-            Properties baseProperties, String requestedEnvironment, boolean loadEnvironmentResource) {
+    private ConfigManager(Properties properties) {
         this.properties = new Properties();
-        this.properties.putAll(baseProperties);
-        this.environment = resolveEnvironment(requestedEnvironment, baseProperties);
-        if (loadEnvironmentResource) {
-            this.properties.putAll(loadClasspathProperties(environmentResourceName(this.environment)));
-        }
-        this.properties.setProperty("environment", this.environment);
+        this.properties.putAll(properties);
+        this.environment = properties.getProperty("environment", DEFAULT_ENVIRONMENT);
     }
 
     public static ConfigManager fromFiles(Path baseConfigFile, String environment) throws IOException {
         Objects.requireNonNull(baseConfigFile, "baseConfigFile must not be null");
-        Properties baseProperties = loadFile(baseConfigFile);
-        String selectedEnvironment = resolveEnvironment(environment, baseProperties);
-        Properties mergedProperties = new Properties();
-        mergedProperties.putAll(baseProperties);
-
-        Path environmentFile = baseConfigFile.resolveSibling(environmentResourceName(selectedEnvironment));
-        if (Files.exists(environmentFile)) {
-            mergedProperties.putAll(loadFile(environmentFile));
-        }
-        return new ConfigManager(mergedProperties, selectedEnvironment, false);
+        return new ConfigManager(EnvironmentLoader.loadFiles(baseConfigFile, environment));
     }
 
     public String getEnvironment() {
@@ -150,53 +132,4 @@ public final class ConfigManager {
         return copy;
     }
 
-    private static String resolveEnvironment(String requestedEnvironment, Properties baseProperties) {
-        String selected = firstNonBlank(
-                requestedEnvironment,
-                System.getProperty("environment"),
-                baseProperties.getProperty("environment"),
-                DEFAULT_ENVIRONMENT);
-        if (!VALID_ENVIRONMENT.matcher(selected).matches()) {
-            throw new ConfigurationException("Invalid environment name: " + selected);
-        }
-        return selected;
-    }
-
-    private static String firstNonBlank(String... candidates) {
-        for (String candidate : candidates) {
-            if (candidate != null && !candidate.isBlank()) {
-                return candidate.trim();
-            }
-        }
-        return DEFAULT_ENVIRONMENT;
-    }
-
-    private static String environmentResourceName(String environment) {
-        return "env." + environment + ".properties";
-    }
-
-    private static Properties loadClasspathProperties(String resourceName) {
-        Properties loaded = new Properties();
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        InputStream resource = classLoader == null
-                ? ConfigManager.class.getClassLoader().getResourceAsStream(resourceName)
-                : classLoader.getResourceAsStream(resourceName);
-        if (resource == null) {
-            return loaded;
-        }
-        try (InputStream input = resource) {
-            loaded.load(input);
-        } catch (IOException exception) {
-            throw new ConfigurationException("Unable to load configuration resource: " + resourceName, exception);
-        }
-        return loaded;
-    }
-
-    private static Properties loadFile(Path path) throws IOException {
-        Properties loaded = new Properties();
-        try (InputStream input = Files.newInputStream(path)) {
-            loaded.load(input);
-        }
-        return loaded;
-    }
 }
