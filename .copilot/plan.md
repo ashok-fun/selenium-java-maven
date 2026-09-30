@@ -1,11 +1,11 @@
-1. [x] DriverManager (Thread‑Local WebDriver + Cross‑Browser)
+1. [X] DriverManager (Thread‑Local WebDriver + Cross‑Browser)
     Create a DriverManager class using Java and Selenium that supports thread‑local WebDriver instances for parallel TestNG execution. Include Chrome, Firefox, and Edge support for Windows 11. Use Selenium Manager for driver binaries. Provide methods: getDriver(), setDriver(), quitDriver(). Ensure thread safety and clean teardown. Do not modify other framework files.
+2. [X] BaseTest (Setup, Teardown, Extent Reports Integration)
+    Generate a BaseTest class that initializes and tears down WebDriver using DriverManager. Integrate Extent Reports: create test nodes, attach screenshots on failure, and log steps. Ensure compatibility with parallel TestNG execution. Do not modify other classes.
+3. [X] BasePage + BaseComponent (POM + Component Model)
+    Create a BasePage class and a BaseComponent class for a POM + Component Object Model framework. Include WebDriver reference, fluent wait utilities, common actions (click, type, getText), and logging. Ensure both classes are reusable and extendable. Do not modify unrelated files.
 
-2. [x] BaseTest (Setup, Teardown, Extent Reports Integration)
-   Generate a BaseTest class that initializes and tears down WebDriver using DriverManager. Integrate Extent Reports: create test nodes, attach screenshots on failure, and log steps. Ensure compatibility with parallel TestNG execution. Do not modify other classes.
-3. [x] BasePage + BaseComponent (POM + Component Model)
-   Create a BasePage class and a BaseComponent class for a POM + Component Object Model framework. Include WebDriver reference, fluent wait utilities, common actions (click, type, getText), and logging. Ensure both classes are reusable and extendable. Do not modify unrelated files.
-4. UI Components (Header, Footer, Sidebar, Modal, Table, Dropdown, Toast)
+4. [X] UI Components (Header, Footer, Sidebar, Modal, Table, Dropdown, Toast)
    Generate component classes: HeaderComponent, FooterComponent, SidebarComponent, ModalComponent, TableComponent, DropdownComponent, ToastComponent. Each should extend BaseComponent and expose reusable actions. Keep locators clean and descriptive. Do not modify other modules.
 5. Page Objects for AutomationExercise (Signup/Login + Registration)
    Create Page Object classes for automationexercise.com to support Test Case 1: Register User. Include HomePage, LoginPage, SignupPage, AccountCreatedPage. Use POM + Component Object Model. Include clean locators, reusable actions, and assertions placeholders. Do not modify other framework files.
