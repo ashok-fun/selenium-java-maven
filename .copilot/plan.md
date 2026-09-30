@@ -1,6 +1,6 @@
+1. [ ] DriverManager (Thread‑Local WebDriver + Cross‑Browser)
+    Create a DriverManager class using Java and Selenium that supports thread‑local WebDriver instances for parallel TestNG execution. Include Chrome, Firefox, and Edge support for Windows 11. Use Selenium Manager for driver binaries. Provide methods: getDriver(), setDriver(), quitDriver(). Ensure thread safety and clean teardown. Do not modify other framework files.
 
-1. [x] DriverManager (Thread‑Local WebDriver + Cross‑Browser)
-   Create a DriverManager class using Java and Selenium that supports thread‑local WebDriver instances for parallel TestNG execution. Include Chrome, Firefox, and Edge support for Windows 11. Use Selenium Manager for driver binaries. Provide methods: getDriver(), setDriver(), quitDriver(). Ensure thread safety and clean teardown. Do not modify other framework files.
 2. BaseTest (Setup, Teardown, Extent Reports Integration)
    Generate a BaseTest class that initializes and tears down WebDriver using DriverManager. Integrate Extent Reports: create test nodes, attach screenshots on failure, and log steps. Ensure compatibility with parallel TestNG execution. Do not modify other classes.
 3. BasePage + BaseComponent (POM + Component Model)
