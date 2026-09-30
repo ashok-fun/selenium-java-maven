@@ -5,6 +5,7 @@ import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.CodeLanguage;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
 import java.lang.reflect.Method;
+import java.nio.file.Path;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -13,65 +14,93 @@ import org.testng.ITestResult;
 import org.testng.annotations.Test;
 
 public final class ExtentLogger {
-    private static final ThreadLocal<ExtentTest> CURRENT_TEST = new ThreadLocal<>();
+    private static final ThreadLocal<ActiveTest> CURRENT_TEST = new ThreadLocal<>();
 
     private ExtentLogger() {
     }
 
-    public static ExtentTest startTest(Method testMethod) {
+    public static ExtentTest startTest(Method testMethod, String browser) {
         String testName = testMethod.getDeclaringClass().getSimpleName() + "." + testMethod.getName();
-        ExtentTest test = ExtentManager.getInstance().createTest(testName);
+        ExtentTest consolidatedTest = ExtentManager.getInstance().createTest(testName);
+        ExtentManager.IndividualReport individualReport = ExtentManager.createIndividualReport(
+                testMethod.getDeclaringClass().getSimpleName(), testMethod.getName(), browser);
+        ExtentTest individualTest = individualReport.reports().createTest(testName);
         Test testAnnotation = testMethod.getAnnotation(Test.class);
         if (testAnnotation != null && testAnnotation.groups().length > 0) {
-            test.assignCategory(testAnnotation.groups());
+            consolidatedTest.assignCategory(testAnnotation.groups());
+            individualTest.assignCategory(testAnnotation.groups());
         }
-        CURRENT_TEST.set(test);
-        return test;
+        CURRENT_TEST.set(new ActiveTest(consolidatedTest, individualReport, individualTest));
+        return consolidatedTest;
     }
 
     public static ExtentTest currentTest() {
-        return CURRENT_TEST.get();
+        ActiveTest activeTest = CURRENT_TEST.get();
+        return activeTest == null ? null : activeTest.consolidatedTest();
+    }
+
+    public static Path currentIndividualReportPath() {
+        ActiveTest activeTest = CURRENT_TEST.get();
+        return activeTest == null ? null : activeTest.individualReport().path();
     }
 
     public static void info(String message) {
-        requireCurrentTest().info(message);
+        ActiveTest activeTest = requireCurrentTest();
+        activeTest.consolidatedTest().info(message);
+        activeTest.individualTest().info(message);
     }
 
     public static void fail(Throwable failure) {
-        requireCurrentTest().fail(failure);
+        ActiveTest activeTest = requireCurrentTest();
+        activeTest.consolidatedTest().fail(failure);
+        activeTest.individualTest().fail(failure);
     }
 
     public static void logResult(ITestResult result, WebDriver driver) {
-        ExtentTest test = CURRENT_TEST.get();
-        if (test == null) {
+        ActiveTest activeTest = CURRENT_TEST.get();
+        if (activeTest == null) {
             return;
         }
 
         if (result.getStatus() == ITestResult.FAILURE) {
-            captureFailureArtifacts(test, driver);
+            captureFailureArtifacts(activeTest, driver);
             Throwable failure = result.getThrowable();
             if (failure != null) {
-                test.fail(failure);
+                activeTest.consolidatedTest().fail(failure);
+                activeTest.individualTest().fail(failure);
             } else {
-                test.fail("Test failed without an exception detail");
+                activeTest.consolidatedTest().fail("Test failed without an exception detail");
+                activeTest.individualTest().fail("Test failed without an exception detail");
             }
         } else if (result.getStatus() == ITestResult.SKIP) {
-            test.log(Status.SKIP, "Test skipped");
+            activeTest.consolidatedTest().log(Status.SKIP, "Test skipped");
+            activeTest.individualTest().log(Status.SKIP, "Test skipped");
         } else {
-            test.pass("Test passed");
+            activeTest.consolidatedTest().pass("Test passed");
+            activeTest.individualTest().pass("Test passed");
         }
     }
 
     public static void logTeardownFailure(Throwable failure, ITestResult result) {
-        ExtentTest test = CURRENT_TEST.get();
-        if (test == null) {
+        ActiveTest activeTest = CURRENT_TEST.get();
+        if (activeTest == null) {
             return;
         }
-        test.warning("WebDriver teardown failed: " + failure.getMessage());
+        String warning = "WebDriver teardown failed: " + failure.getMessage();
+        activeTest.consolidatedTest().warning(warning);
+        activeTest.individualTest().warning(warning);
         if (result.getStatus() != ITestResult.FAILURE) {
             result.setStatus(ITestResult.FAILURE);
             result.setThrowable(failure);
-            test.fail(failure);
+            activeTest.consolidatedTest().fail(failure);
+            activeTest.individualTest().fail(failure);
+        }
+    }
+
+    public static void flushCurrentIndividualReport() {
+        ActiveTest activeTest = CURRENT_TEST.get();
+        if (activeTest != null) {
+            activeTest.individualReport().reports().flush();
         }
     }
 
@@ -79,30 +108,44 @@ public final class ExtentLogger {
         CURRENT_TEST.remove();
     }
 
-    private static ExtentTest requireCurrentTest() {
-        ExtentTest test = CURRENT_TEST.get();
-        if (test == null) {
+    private static ActiveTest requireCurrentTest() {
+        ActiveTest activeTest = CURRENT_TEST.get();
+        if (activeTest == null) {
             throw new IllegalStateException("No active Extent test is associated with this thread");
         }
-        return test;
+        return activeTest;
     }
 
-    private static void captureFailureArtifacts(ExtentTest test, WebDriver driver) {
+    private static void captureFailureArtifacts(ActiveTest activeTest, WebDriver driver) {
         if (driver == null) {
             return;
         }
 
         try {
             String screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64);
-            test.addScreenCaptureFromBase64String(screenshot, "Failure screenshot");
+            activeTest.consolidatedTest().addScreenCaptureFromBase64String(screenshot, "Failure screenshot");
+            activeTest.individualTest().addScreenCaptureFromBase64String(screenshot, "Failure screenshot");
         } catch (WebDriverException | ClassCastException exception) {
-            test.warning("Unable to capture failure screenshot: " + exception.getMessage());
+            warnBoth(activeTest, "Unable to capture failure screenshot: " + exception.getMessage());
         }
 
         try {
-            test.info(MarkupHelper.createCodeBlock(driver.getPageSource(), CodeLanguage.XML));
+            var pageSource = MarkupHelper.createCodeBlock(driver.getPageSource(), CodeLanguage.XML);
+            activeTest.consolidatedTest().info(pageSource);
+            activeTest.individualTest().info(pageSource);
         } catch (WebDriverException exception) {
-            test.warning("Unable to capture page source: " + exception.getMessage());
+            warnBoth(activeTest, "Unable to capture page source: " + exception.getMessage());
         }
+    }
+
+    private static void warnBoth(ActiveTest activeTest, String message) {
+        activeTest.consolidatedTest().warning(message);
+        activeTest.individualTest().warning(message);
+    }
+
+    private record ActiveTest(
+            ExtentTest consolidatedTest,
+            ExtentManager.IndividualReport individualReport,
+            ExtentTest individualTest) {
     }
 }

@@ -19,12 +19,11 @@ public abstract class BaseTest {
 
     @BeforeMethod(alwaysRun = true)
     protected void setUp(Method testMethod, ITestContext testContext) {
-        ExtentLogger.startTest(testMethod);
-
         String browser = testContext.getCurrentXmlTest().getParameter("browser");
         if (browser == null || browser.isBlank()) {
             browser = System.getProperty("browser", DEFAULT_BROWSER);
         }
+        ExtentLogger.startTest(testMethod, browser);
         try {
             WebDriver driver = DriverManager.getDriver(browser);
             CURRENT_DRIVER.set(driver);
@@ -50,6 +49,7 @@ public abstract class BaseTest {
                 ExtentLogger.logTeardownFailure(cleanupFailure, result);
             } finally {
                 CURRENT_DRIVER.remove();
+                ExtentLogger.flushCurrentIndividualReport();
                 ExtentLogger.clear();
             }
         }
