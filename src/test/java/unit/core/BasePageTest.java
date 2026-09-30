@@ -1,8 +1,10 @@
-package core;
+package unit.core;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import core.BaseComponent;
+import core.BasePage;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;

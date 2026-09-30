@@ -1,9 +1,14 @@
-package ui.components;
+package unit.ui.components;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import ui.components.DropdownComponent;
+import ui.components.HeaderComponent;
+import ui.components.ModalComponent;
+import ui.components.TableComponent;
+import ui.components.ToastComponent;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;

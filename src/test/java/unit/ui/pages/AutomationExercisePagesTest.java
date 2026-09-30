@@ -1,8 +1,13 @@
-package ui.pages;
+package unit.ui.pages;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import ui.pages.AccountCreatedPage;
+import ui.pages.AccountDeletedPage;
+import ui.pages.HomePage;
+import ui.pages.LoginPage;
+import ui.pages.SignupPage;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package reporting;
+package unit.reporting;
 
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -8,6 +8,8 @@ import com.aventstack.extentreports.ExtentTest;
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.Test;
+import reporting.ExtentLogger;
+import reporting.ExtentManager;
 
 class ExtentReportingTest {
     @Test

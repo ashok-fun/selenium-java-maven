@@ -1,10 +1,16 @@
-package utils;
+package unit.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import utils.BrowserConsoleLogCollector;
+import utils.CsvUtils;
+import utils.ExcelUtils;
+import utils.FileDownloadValidator;
+import utils.JsonUtils;
+import utils.RandomDataGenerator;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
