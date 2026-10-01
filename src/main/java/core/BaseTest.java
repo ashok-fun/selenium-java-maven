@@ -1,6 +1,8 @@
 package core;
 
 import java.lang.reflect.Method;
+import java.io.IOException;
+import java.nio.file.Path;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -11,6 +13,7 @@ import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
 import reporting.ExtentLogger;
 import reporting.ExtentManager;
+import utils.BrowserConsoleLogCollector;
 
 public abstract class BaseTest {
     private static final Logger LOGGER = LogManager.getLogger(BaseTest.class);
@@ -39,6 +42,18 @@ public abstract class BaseTest {
 
     @AfterMethod(alwaysRun = true)
     protected void tearDown(ITestResult result) {
+        try {
+            Path individualReportPath = ExtentLogger.currentIndividualReportPath();
+            if (individualReportPath != null) {
+                Path consoleLogPath = BrowserConsoleLogCollector.saveBesideReport(
+                        individualReportPath, CURRENT_DRIVER.get());
+                ExtentLogger.info("Browser console logs saved to " + consoleLogPath.getFileName());
+            }
+        } catch (IOException | RuntimeException logFailure) {
+            LOGGER.error("Unable to save browser console logs", logFailure);
+            ExtentLogger.warning("Unable to save browser console logs: " + logFailure.getMessage());
+        }
+
         try {
             ExtentLogger.logResult(result, CURRENT_DRIVER.get());
         } finally {

@@ -121,6 +121,37 @@ class UtilityReadersTest {
         assertEquals(List.of("Uncaught error"), BrowserConsoleLogCollector.collectSevereMessages(driver));
     }
 
+        @Test
+        void browserConsoleLogsAreSavedBesideIndividualReport() throws Exception {
+        Path reportDirectory = Files.createDirectories(temporaryDirectory.resolve("Consolidated report_run"));
+        Path individualReport = reportDirectory.resolve("RegisterUserTest_test_edge_run.html");
+        LogEntries entries = new LogEntries(List.of(
+            new LogEntry(Level.SEVERE, 1L, "API request failed: /api/products"),
+            new LogEntry(Level.INFO, 2L, "Page loaded")));
+        Logs logs = proxy(Logs.class, (proxy, method, arguments) ->
+            method.getName().equals("get") ? entries : null);
+        WebDriver.Options options = proxy(WebDriver.Options.class, (proxy, method, arguments) ->
+            method.getName().equals("logs") ? logs : null);
+        WebDriver driver = proxy(WebDriver.class, (proxy, method, arguments) ->
+            method.getName().equals("manage") ? options : null);
+
+        Path consoleLog = BrowserConsoleLogCollector.saveBesideReport(individualReport, driver);
+        String contents = Files.readString(consoleLog);
+
+        assertEquals("RegisterUserTest_test_edge_run.txt", consoleLog.getFileName().toString());
+        assertTrue(contents.contains("[SEVERE] API request failed: /api/products"));
+        assertTrue(contents.contains("[INFO] Page loaded"));
+        }
+
+        @Test
+        void browserConsoleLogFileIsCreatedWhenDriverWasNotInitialized() throws Exception {
+        Path individualReport = temporaryDirectory.resolve("test_edge_run.html");
+
+        Path consoleLog = BrowserConsoleLogCollector.saveBesideReport(individualReport, null);
+
+        assertTrue(Files.readString(consoleLog).contains("WebDriver was not initialized"));
+        }
+
     private <T> T proxy(Class<T> type, InvocationHandler handler) {
         return type.cast(Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[] {type}, handler));
     }

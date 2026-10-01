@@ -1,6 +1,13 @@
 package utils;
 
 import java.util.List;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.Instant;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -31,5 +38,34 @@ public final class BrowserConsoleLogCollector {
                 .filter(entry -> entry.getLevel().getName().equals("SEVERE"))
                 .map(LogEntry::getMessage)
                 .toList();
+    }
+
+    public static Path saveBesideReport(Path individualReportPath, WebDriver driver) throws IOException {
+        Objects.requireNonNull(individualReportPath, "individualReportPath must not be null");
+        String reportFileName = individualReportPath.getFileName().toString();
+        int extensionIndex = reportFileName.lastIndexOf('.');
+        String logFileName = extensionIndex < 0
+                ? reportFileName + ".txt"
+                : reportFileName.substring(0, extensionIndex) + ".txt";
+        Path logPath = individualReportPath.resolveSibling(logFileName);
+
+        String logContent;
+        if (driver == null) {
+            logContent = "Browser console logs unavailable: WebDriver was not initialized.";
+        } else {
+            List<LogEntry> entries = collect(driver);
+            logContent = entries.isEmpty()
+                    ? "No browser console logs were captured."
+                    : entries.stream()
+                            .map(BrowserConsoleLogCollector::formatEntry)
+                            .collect(Collectors.joining(System.lineSeparator()));
+        }
+        Files.writeString(logPath, logContent + System.lineSeparator(), StandardCharsets.UTF_8);
+        return logPath;
+    }
+
+    private static String formatEntry(LogEntry entry) {
+        return Instant.ofEpochMilli(entry.getTimestamp()) + " ["
+                + entry.getLevel().getName() + "] " + entry.getMessage();
     }
 }

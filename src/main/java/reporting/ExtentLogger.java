@@ -50,6 +50,12 @@ public final class ExtentLogger {
         activeTest.individualTest().info(message);
     }
 
+    public static void warning(String message) {
+        ActiveTest activeTest = requireCurrentTest();
+        activeTest.consolidatedTest().warning(message);
+        activeTest.individualTest().warning(message);
+    }
+
     public static void fail(Throwable failure) {
         ActiveTest activeTest = requireCurrentTest();
         activeTest.consolidatedTest().fail(failure);
