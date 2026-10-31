@@ -1,34 +1,41 @@
 package ui.pages;
 
+import core.BasePage;
+import core.WaitTimeoutException;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.Locale;
 import java.util.Objects;
-import core.WaitTimeoutException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import core.BasePage;
 import ui.components.DropdownComponent;
 
 public class SignupPage extends BasePage {
     private static final By ACCOUNT_INFORMATION_HEADING = By.xpath(
             "//h2[.//b[normalize-space()='Enter Account Information']]");
-    private static final By PASSWORD = By.id("password");
+    private static final By ADDRESS_INFORMATION_HEADING = By.xpath(
+            "//h2[.//b[normalize-space()='Address Information']]");
     private static final By TITLE_MR = By.id("id_gender1");
     private static final By TITLE_MRS = By.id("id_gender2");
+    private static final By NAME = By.cssSelector("input[data-qa='name']");
+    private static final By EMAIL = By.cssSelector("input[data-qa='email']");
+    private static final By PASSWORD = By.cssSelector("input[data-qa='password']");
+    private static final By DAYS = By.cssSelector("select[data-qa='days']");
+    private static final By MONTHS = By.cssSelector("select[data-qa='months']");
+    private static final By YEARS = By.cssSelector("select[data-qa='years']");
     private static final By NEWSLETTER = By.id("newsletter");
     private static final By SPECIAL_OFFERS = By.id("optin");
-    private static final By FIRST_NAME = By.id("first_name");
-    private static final By LAST_NAME = By.id("last_name");
-    private static final By COMPANY = By.id("company");
-    private static final By ADDRESS = By.id("address1");
-    private static final By ADDRESS_2 = By.id("address2");
-    private static final By COUNTRY = By.id("country");
-    private static final By STATE = By.id("state");
-    private static final By CITY = By.id("city");
-    private static final By ZIPCODE = By.id("zipcode");
-    private static final By MOBILE_NUMBER = By.id("mobile_number");
+    private static final By FIRST_NAME = By.cssSelector("input[data-qa='first_name']");
+    private static final By LAST_NAME = By.cssSelector("input[data-qa='last_name']");
+    private static final By COMPANY = By.cssSelector("input[data-qa='company']");
+    private static final By ADDRESS = By.cssSelector("input[data-qa='address']");
+    private static final By ADDRESS_2 = By.cssSelector("input[data-qa='address2']");
+    private static final By COUNTRY = By.cssSelector("select[data-qa='country']");
+    private static final By STATE = By.cssSelector("input[data-qa='state']");
+    private static final By CITY = By.cssSelector("input[data-qa='city']");
+    private static final By ZIPCODE = By.cssSelector("input[data-qa='zipcode']");
+    private static final By MOBILE_NUMBER = By.cssSelector("input[data-qa='mobile_number']");
     private static final By CREATE_ACCOUNT_BUTTON = By.cssSelector("button[data-qa='create-account']");
 
     public SignupPage(WebDriver driver) {
@@ -36,19 +43,26 @@ public class SignupPage extends BasePage {
     }
 
     public boolean isAccountInformationVisible() {
-        try {
-            return getText(ACCOUNT_INFORMATION_HEADING)
-                    .trim()
-                    .equalsIgnoreCase("Enter Account Information");
-        } catch (WaitTimeoutException exception) {
-            return false;
-        }
+        return isHeadingVisible(ACCOUNT_INFORMATION_HEADING, "Enter Account Information");
+    }
+
+    public boolean isAddressInformationVisible() {
+        return isHeadingVisible(ADDRESS_INFORMATION_HEADING, "Address Information");
     }
 
     public SignupPage selectTitle(Title title) {
         Objects.requireNonNull(title, "title must not be null");
         click(title == Title.MR ? TITLE_MR : TITLE_MRS);
         return this;
+    }
+
+    public SignupPage enterName(String name) {
+        type(NAME, name);
+        return this;
+    }
+
+    public String getEmail() {
+        return waitForVisible(EMAIL).getAttribute("value");
     }
 
     public SignupPage enterPassword(String password) {
@@ -58,12 +72,10 @@ public class SignupPage extends BasePage {
 
     public SignupPage enterDateOfBirth(LocalDate dateOfBirth) {
         Objects.requireNonNull(dateOfBirth, "dateOfBirth must not be null");
-        new DropdownComponent(driver, By.id("days"))
-                .selectByVisibleText(Integer.toString(dateOfBirth.getDayOfMonth()));
-        new DropdownComponent(driver, By.id("months"))
-                .selectByVisibleText(dateOfBirth.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
-        new DropdownComponent(driver, By.id("years"))
-                .selectByVisibleText(Integer.toString(dateOfBirth.getYear()));
+        new DropdownComponent(driver, DAYS).selectByVisibleText(Integer.toString(dateOfBirth.getDayOfMonth()));
+        new DropdownComponent(driver, MONTHS).selectByVisibleText(
+                dateOfBirth.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH));
+        new DropdownComponent(driver, YEARS).selectByVisibleText(Integer.toString(dateOfBirth.getYear()));
         return this;
     }
 
@@ -95,6 +107,14 @@ public class SignupPage extends BasePage {
     public AccountCreatedPage createAccount() {
         click(CREATE_ACCOUNT_BUTTON);
         return new AccountCreatedPage(driver);
+    }
+
+    private boolean isHeadingVisible(By locator, String expectedText) {
+        try {
+            return getText(locator).trim().equalsIgnoreCase(expectedText);
+        } catch (WaitTimeoutException exception) {
+            return false;
+        }
     }
 
     private void setCheckbox(By locator, boolean checked) {

@@ -19,8 +19,8 @@
 - [X] Replace framework logging with Log4j2; add console and time/size-based rolling-file appenders in `log4j2.xml`.
 - [X] Add `EnvironmentLoader` and bundled `config.properties`, `env.dev.properties`, and `env.qa.properties` resources.
 - [ ] Add Checkstyle configuration/plugin and document SonarLint usage.
-- [ ] Expand README beyond its current title, add architecture diagram and `CONTRIBUTING.md`.
-- [ ] Add Azure DevOps pipeline for build/tests and report artifact publishing.
+- [ ] Expand README beyond its current title, add architecture diagram and `CONTRIBUTING.md`. will do it once basic framework is ready.
+- [ ] Add Azure DevOps pipeline for build/tests and report artifact publishing. out of scope for now.
 
 ## 2. UI
 
