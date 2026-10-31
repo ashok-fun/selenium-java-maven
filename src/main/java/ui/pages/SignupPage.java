@@ -7,6 +7,7 @@ import java.time.format.TextStyle;
 import java.util.Locale;
 import java.util.Objects;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import ui.components.DropdownComponent;
@@ -105,6 +106,10 @@ public class SignupPage extends BasePage {
     }
 
     public AccountCreatedPage createAccount() {
+        WebElement createAccountButton = waitForClickable(CREATE_ACCOUNT_BUTTON);
+        ((JavascriptExecutor) driver).executeScript(
+                "arguments[0].scrollIntoView({block: 'start', inline: 'nearest'});",
+                createAccountButton);
         click(CREATE_ACCOUNT_BUTTON);
         return new AccountCreatedPage(driver);
     }

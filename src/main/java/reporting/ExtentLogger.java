@@ -1,9 +1,11 @@
 package reporting;
 
 import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.CodeLanguage;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
+import com.aventstack.extentreports.model.Media;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 import org.openqa.selenium.OutputType;
@@ -62,6 +64,21 @@ public final class ExtentLogger {
         activeTest.individualTest().fail(failure);
     }
 
+    public static void logAssertion(WebDriver driver, boolean passed, String details) {
+        ActiveTest activeTest = requireCurrentTest();
+        Media screenshot = null;
+        try {
+            String screenshotData = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64);
+            screenshot = MediaEntityBuilder.createScreenCaptureFromBase64String(
+                    screenshotData, "Assertion screenshot").build();
+        } catch (WebDriverException | ClassCastException exception) {
+            warnBoth(activeTest, "Unable to capture assertion screenshot: " + exception.getMessage());
+        }
+        Status status = passed ? Status.PASS : Status.FAIL;
+        log(activeTest.consolidatedTest(), status, details, screenshot);
+        log(activeTest.individualTest(), status, details, screenshot);
+    }
+
     public static void logResult(ITestResult result, WebDriver driver) {
         ActiveTest activeTest = CURRENT_TEST.get();
         if (activeTest == null) {
@@ -69,15 +86,18 @@ public final class ExtentLogger {
         }
 
         if (result.getStatus() == ITestResult.FAILURE) {
-            captureFailureArtifacts(activeTest, driver);
             Throwable failure = result.getThrowable();
+            Media screenshot = createScreenshot(driver, activeTest);
             if (failure != null) {
-                activeTest.consolidatedTest().fail(failure);
-                activeTest.individualTest().fail(failure);
+                logFailure(activeTest.consolidatedTest(), failure, screenshot);
+                logFailure(activeTest.individualTest(), failure, screenshot);
             } else {
-                activeTest.consolidatedTest().fail("Test failed without an exception detail");
-                activeTest.individualTest().fail("Test failed without an exception detail");
+                log(activeTest.consolidatedTest(), Status.FAIL,
+                        "Test failed without an exception detail", screenshot);
+                log(activeTest.individualTest(), Status.FAIL,
+                        "Test failed without an exception detail", screenshot);
             }
+            captureFailurePageSource(activeTest, driver);
         } else if (result.getStatus() == ITestResult.SKIP) {
             activeTest.consolidatedTest().log(Status.SKIP, "Test skipped");
             activeTest.individualTest().log(Status.SKIP, "Test skipped");
@@ -122,25 +142,45 @@ public final class ExtentLogger {
         return activeTest;
     }
 
-    private static void captureFailureArtifacts(ActiveTest activeTest, WebDriver driver) {
+    private static Media createScreenshot(WebDriver driver, ActiveTest activeTest) {
+        if (driver == null) {
+            return null;
+        }
+        try {
+            String screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64);
+            return MediaEntityBuilder.createScreenCaptureFromBase64String(screenshot, "Failure screenshot").build();
+        } catch (WebDriverException | ClassCastException exception) {
+            warnBoth(activeTest, "Unable to capture failure screenshot: " + exception.getMessage());
+            return null;
+        }
+    }
+
+    private static void captureFailurePageSource(ActiveTest activeTest, WebDriver driver) {
         if (driver == null) {
             return;
         }
-
-        try {
-            String screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BASE64);
-            activeTest.consolidatedTest().addScreenCaptureFromBase64String(screenshot, "Failure screenshot");
-            activeTest.individualTest().addScreenCaptureFromBase64String(screenshot, "Failure screenshot");
-        } catch (WebDriverException | ClassCastException exception) {
-            warnBoth(activeTest, "Unable to capture failure screenshot: " + exception.getMessage());
-        }
-
         try {
             var pageSource = MarkupHelper.createCodeBlock(driver.getPageSource(), CodeLanguage.XML);
             activeTest.consolidatedTest().info(pageSource);
             activeTest.individualTest().info(pageSource);
         } catch (WebDriverException exception) {
             warnBoth(activeTest, "Unable to capture page source: " + exception.getMessage());
+        }
+    }
+
+    private static void log(ExtentTest test, Status status, String details, Media media) {
+        if (media == null) {
+            test.log(status, details);
+        } else {
+            test.log(status, details, media);
+        }
+    }
+
+    private static void logFailure(ExtentTest test, Throwable failure, Media media) {
+        if (media == null) {
+            test.fail(failure);
+        } else {
+            test.fail(failure, media);
         }
     }
 

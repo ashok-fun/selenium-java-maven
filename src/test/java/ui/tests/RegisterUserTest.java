@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.Locale;
 import java.util.UUID;
 import net.datafaker.Faker;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 import core.BaseTest;
@@ -40,19 +39,20 @@ public class RegisterUserTest extends BaseTest {
 
         logStep("Open AutomationExercise and verify the home page");
         HomePage homePage = new HomePage(DriverManager.getDriver()).open();
-        Assert.assertTrue(homePage.isHomePageVisible(), "Home page should be visible");
+        assertTrueWithScreenshot(homePage.isHomePageVisible(), "Home page should be visible");
 
         logStep("Open Signup / Login and verify the new-user signup form");
         LoginPage loginPage = homePage.clickSignupLogin();
-        Assert.assertTrue(loginPage.isNewUserSignupVisible(), "New User Signup! should be visible");
+        assertTrueWithScreenshot(loginPage.isNewUserSignupVisible(), "New User Signup! should be visible");
 
         logStep("Enter a unique name and email and submit signup");
         SignupPage signupPage = loginPage.startSignup(name, email);
-        Assert.assertTrue(signupPage.isAccountInformationVisible(),
+        assertTrueWithScreenshot(signupPage.isAccountInformationVisible(),
                 "Enter Account Information should be visible");
 
         logStep("Fill account information and signup preferences");
-        Assert.assertEquals(signupPage.getEmail(), email, "Signup email should be carried into account details");
+        assertEqualsWithScreenshot(signupPage.getEmail(), email,
+                "Signup email should be carried into account details");
         signupPage.selectTitle(title)
                 .enterName(name)
                 .enterPassword(password)
@@ -67,7 +67,8 @@ public class RegisterUserTest extends BaseTest {
         AccountCreatedPage accountCreatedPage = signupPage.fillAddress(address).createAccount();
 
         logStep("Verify the account-created confirmation");
-        Assert.assertTrue(accountCreatedPage.isAccountCreatedVisible(), "ACCOUNT CREATED! should be visible");
+        assertTrueWithScreenshot(accountCreatedPage.isAccountCreatedVisible(),
+                "ACCOUNT CREATED! should be visible");
     }
 
     @Test(groups = {"ui", "smoke", "regression", "crossbrowser"})
@@ -78,11 +79,11 @@ public class RegisterUserTest extends BaseTest {
 
         logStep("Open AutomationExercise and verify the home page");
         HomePage homePage = new HomePage(DriverManager.getDriver()).open();
-        softly.assertTrue(homePage.isHomePageVisible(), "Home page should be visible");
+        assertTrueWithScreenshot(softly, homePage.isHomePageVisible(), "Home page should be visible");
 
         logStep("Open Signup / Login and verify the new-user signup form");
         LoginPage loginPage = homePage.clickSignupLogin();
-        softly.assertTrue(loginPage.isNewUserSignupVisible(), "New User Signup! should be visible");
+        assertTrueWithScreenshot(softly, loginPage.isNewUserSignupVisible(), "New User Signup! should be visible");
 
         
 

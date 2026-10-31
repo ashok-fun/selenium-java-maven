@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -97,6 +98,7 @@ class AutomationExercisePagesTest {
         assertTrue(actions.contains("type:10001"));
         assertTrue(actions.contains("type:5551234567"));
         assertTrue(actions.contains("option-click:United States"));
+        assertTrue(actions.contains("scroll-into-view"));
         assertTrue(actions.contains("click:" + By.cssSelector("button[data-qa='create-account']")));
     }
 
@@ -123,11 +125,15 @@ class AutomationExercisePagesTest {
                 actions.add("navigate:" + arguments[0]);
                 return null;
             }
+            if (method.getName().equals("executeScript")) {
+                actions.add("scroll-into-view");
+                return null;
+            }
             if (method.getName().equals("findElement")) {
                 return createElement((By) arguments[0], actions);
             }
             return null;
-        });
+        }, JavascriptExecutor.class);
     }
 
     private WebElement createElement(By locator, List<String> actions) {
@@ -205,7 +211,10 @@ class AutomationExercisePagesTest {
         return "";
     }
 
-    private <T> T proxy(Class<T> type, InvocationHandler handler) {
-        return type.cast(Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[] {type}, handler));
+    private <T> T proxy(Class<T> type, InvocationHandler handler, Class<?>... additionalInterfaces) {
+        Class<?>[] interfaces = new Class<?>[additionalInterfaces.length + 1];
+        interfaces[0] = type;
+        System.arraycopy(additionalInterfaces, 0, interfaces, 1, additionalInterfaces.length);
+        return type.cast(Proxy.newProxyInstance(type.getClassLoader(), interfaces, handler));
     }
 }

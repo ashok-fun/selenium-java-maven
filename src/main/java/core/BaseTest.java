@@ -3,14 +3,17 @@ package core;
 import java.lang.reflect.Method;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
-import org.testng.ITestResult;
+import org.testng.Assert;
 import org.testng.ITestContext;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeMethod;
+import org.testng.asserts.SoftAssert;
 import reporting.ExtentLogger;
 import reporting.ExtentManager;
 import utils.BrowserConsoleLogCollector;
@@ -77,5 +80,20 @@ public abstract class BaseTest {
 
     protected final void logStep(String message) {
         ExtentLogger.info(message);
+    }
+
+    protected final void assertTrueWithScreenshot(boolean condition, String message) {
+        ExtentLogger.logAssertion(DriverManager.getDriver(), condition, message);
+        Assert.assertTrue(condition, message);
+    }
+
+    protected final void assertEqualsWithScreenshot(Object actual, Object expected, String message) {
+        ExtentLogger.logAssertion(DriverManager.getDriver(), Objects.equals(actual, expected), message);
+        Assert.assertEquals(actual, expected, message);
+    }
+
+    protected final void assertTrueWithScreenshot(SoftAssert softly, boolean condition, String message) {
+        ExtentLogger.logAssertion(DriverManager.getDriver(), condition, message);
+        softly.assertTrue(condition, message);
     }
 }
