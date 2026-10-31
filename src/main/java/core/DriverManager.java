@@ -72,8 +72,9 @@ public final class DriverManager {
             default -> throw new IllegalArgumentException(
                     "Unsupported browser: " + browserName + ". Supported browsers: chrome, firefox, edge");
         };
-                LOGGER.info("Created {} WebDriver on thread {}", browserName,
-                    Thread.currentThread().getName());
-                return driver;
+        driver.manage().window().maximize();
+        LOGGER.info("Created {} WebDriver on thread {}", browserName,
+                Thread.currentThread().getName());
+        return driver;
     }
 }
